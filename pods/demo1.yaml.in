@@ -1,0 +1,82 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demo1
+spec:
+  # Share the pid namespace across the pod, required for sessiond sidecar
+  shareProcessNamespace: true
+  # These containers are run during pod initialization
+  initContainers:
+  - name: create-session-config
+    image: ${REGION}-docker.pkg.dev/${PROJECT_ID}/${DOCKER_REPO}/lttng-sessiond:v1
+    imagePullPolicy: Always
+    command: ["/bin/sh", "-c", "mkdir -p /lttng/.lttng/sessions/auto && cp /configs/userspace-all.lttng /lttng/.lttng/sessions/auto/"]
+    volumeMounts:
+      - mountPath: /lttng
+        name: lttng-home
+    envFrom:
+      - configMapRef:
+          name: envmap
+  containers:
+  # Sessiond sidecar
+  - name: lttng-sessiond
+    image: ${REGION}-docker.pkg.dev/${PROJECT_ID}/${DOCKER_REPO}/lttng-sessiond:v1
+    imagePullPolicy: Always
+    volumeMounts:
+      - mountPath: /lttng
+        name: lttng-home
+      - mountPath: /run/lttng
+        name: lttng-rundir
+      - mountPath: /dev/shm
+        name: devshm
+    envFrom:
+      - configMapRef:
+          name: envmap
+    command: ["/usr/bin/lttng-sessiond"]
+    args: ["-vvv", "--no-kernel"]
+    lifecycle:
+      postStart:
+        exec:
+          command:
+          - /usr/local/bin/wait-session-active.sh
+  # LTTng app 1
+  - name: lttng-app1
+    image: ${REGION}-docker.pkg.dev/${PROJECT_ID}/${DOCKER_REPO}/lttng-app1:v1
+    imagePullPolicy: Always
+    volumeMounts:
+      - mountPath: /lttng
+        name: lttng-home
+      - mountPath: /run/lttng
+        name: lttng-rundir
+      - mountPath: /dev/shm
+        name: devshm
+    envFrom:
+      - configMapRef:
+          name: envmap
+  # LTTng app 1
+  - name: lttng-app2
+    image: ${REGION}-docker.pkg.dev/${PROJECT_ID}/${DOCKER_REPO}/lttng-app2:v1
+    imagePullPolicy: Always
+    volumeMounts:
+      - mountPath: /lttng
+        name: lttng-home
+      - mountPath: /run/lttng
+        name: lttng-rundir
+      - mountPath: /dev/shm
+        name: devshm
+    envFrom:
+      - configMapRef:
+          name: envmap
+  volumes:
+  # Shared LTTng home dir to preseed configuration
+  - name: lttng-home
+    emptyDir: {}
+  # Shared LTTng run dir for socket communication
+  - name: lttng-rundir
+    emptyDir: {}
+  # Shared SHM drive for tracing buffers
+  - name: devshm
+    emptyDir:
+      sizeLimit: "350Mi"
+      medium: Memory

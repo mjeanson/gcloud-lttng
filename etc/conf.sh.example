@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Project must exists in gcloud with billing enabled
+export PROJECT_ID=""
+
+export REGION=us-east4
+
+export CLUSTER=mon-super-cluster
+
+export DOCKER_REPO=mon-super-repo

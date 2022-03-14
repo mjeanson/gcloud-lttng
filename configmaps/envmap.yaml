@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: envmap
+data:
+  LTTNG_HOME: "/lttng"
+  LTTNG_UST_DEBUG: "1"
