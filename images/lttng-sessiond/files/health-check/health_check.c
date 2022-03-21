@@ -12,8 +12,6 @@
 
 #include <lttng/health.h>
 
-static const char *relayd_path;
-
 static
 int check_component(struct lttng_health *lh, const char *component_name,
 		int ok_if_not_running)
@@ -104,46 +102,13 @@ int check_consumerd(enum lttng_health_consumerd hc)
 	return status;
 }
 
-static
-int check_relayd(const char *path)
-{
-	struct lttng_health *lh;
-	int status;
-
-	lh = lttng_health_create_relayd(path);
-	if (!lh) {
-		perror("lttng_health_create_relayd");
-		return -1;
-	}
-
-	status = check_component(lh, "relayd", 0);
-
-	lttng_health_destroy(lh);
-
-	return status;
-}
-
-int main(int argc, char *argv[])
+int main(void)
 {
 	int status = 0, i;
-
-	for (i = 1; i < argc; i++) {
-		size_t relayd_path_arg_len = strlen("--relayd-path=");
-		if (!strncmp(argv[i], "--relayd-path=",
-				relayd_path_arg_len)) {
-			relayd_path = &argv[i][relayd_path_arg_len];
-		} else {
-			fprintf(stderr, "Unknown option \"%s\". Try --relayd-path=PATH.\n", argv[i]);
-			exit(EXIT_FAILURE);
-		}
-	}
 
 	status |= check_sessiond();
 	for (i = 0; i < NR_LTTNG_HEALTH_CONSUMERD; i++) {
 		status |= check_consumerd(i);
-	}
-	if (relayd_path) {
-		status |= check_relayd(relayd_path);
 	}
 	if (!status) {
 		exit(EXIT_SUCCESS);
