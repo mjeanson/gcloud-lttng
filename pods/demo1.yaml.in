@@ -40,6 +40,15 @@ spec:
         exec:
           command:
           - /usr/local/bin/wait-session-active.sh
+    livenessProbe:
+      exec:
+        command:
+        - /usr/local/bin/lttng-health-check
+      initialDelaySeconds: 5
+      periodSeconds: 1
+      failureThreshold: 1
+      timeoutSeconds: 5
+
   # LTTng app 1
   - name: lttng-app1
     image: ${REGION}-docker.pkg.dev/${PROJECT_ID}/${DOCKER_REPO}/lttng-app1:v1
