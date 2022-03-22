@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Michael Jeanson <mjeanson@efficios.com>
+#
+# SPDX-License-Identifier: MIT
+
 # Base lttng stable-2.13
 FROM ubuntu:20.04
 RUN apt update && apt dist-upgrade -y

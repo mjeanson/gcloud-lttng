@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Michael Jeanson <mjeanson@efficios.com>
+#
+# SPDX-License-Identifier: MIT
+
 .PHONY: pods provision push-images deploy cleanup
 
 PODS = \

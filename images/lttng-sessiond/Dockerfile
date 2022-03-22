@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Michael Jeanson <mjeanson@efficios.com>
+#
+# SPDX-License-Identifier: MIT
+
 # Sidepod lttng-sessiond
 FROM lttng-dev:stable-2.13 AS builder
 WORKDIR /lttng/dev/

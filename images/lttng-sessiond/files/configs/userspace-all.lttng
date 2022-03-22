@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+SPDX-FileCopyrightText: 2022 Michael Jeanson <mjeanson@efficios.com>
+
+SPDX-License-Identifier: MIT
+-->
+
 <sessions>
 	<session>
 		<name>userspace-all</name>

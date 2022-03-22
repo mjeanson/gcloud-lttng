@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# SPDX-FileCopyrightText: 2022 Michael Jeanson <mjeanson@efficios.com>
+#
+# SPDX-License-Identifier: MIT
+
 # Project must exists in gcloud with billing enabled
 export PROJECT_ID=""
 

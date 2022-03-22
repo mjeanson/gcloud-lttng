@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Michael Jeanson <mjeanson@efficios.com>
+#
+# SPDX-License-Identifier: MIT
+
 FROM lttng-dev:stable-2.13
 COPY files/app1/* /app1/
 RUN cd /app1 && make

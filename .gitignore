@@ -1,2 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Michael Jeanson <mjeanson@efficios.com>
+#
+# SPDX-License-Identifier: MIT
+
 /etc/conf.sh
 /pods/demo1.yaml
+/.reuse
