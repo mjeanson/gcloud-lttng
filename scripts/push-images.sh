@@ -12,6 +12,9 @@ basedir=$(readlink -f "$scriptdir/..")
 # shellcheck source=etc/conf.sh
 . "$basedir/etc/conf.sh"
 
+# shellcheck source=scripts/common.sh
+. "$basedir/scripts/common.sh"
+
 build_image() {
 	local image_name=$1
 	local image_tag=$2
@@ -41,17 +44,17 @@ push_project_image() {
 	docker push "${REGION}-docker.pkg.dev/${PROJECT_ID}/${DOCKER_REPO}/${image_name}:${image_tag}"
 }
 
-# Build base lttng docker images
+echo_green "Build base lttng images"
 build_image lttng stable-2.13
 build_image lttng-dev stable-2.13
 
-# Build cluster images
+echo_green "Build cluster images"
 build_project_image lttng-sessiond v1
 build_project_image lttng-relayd v1
 build_project_image lttng-app1 v1
 build_project_image lttng-app2 v1
 
-# Push sessiond image to repo
+echo_green "Push cluster images to repo"
 push_project_image lttng-sessiond v1
 push_project_image lttng-relayd v1
 push_project_image lttng-app1 v1

@@ -12,22 +12,25 @@ basedir=$(readlink -f "$scriptdir/..")
 # shellcheck source=etc/conf.sh
 . "$basedir/etc/conf.sh"
 
-# Set defaults for the CLI
+# shellcheck source=scripts/common.sh
+. "$basedir/scripts/common.sh"
+
+echo_green "Set defaults for the gcloud CLI"
 gcloud config set project $PROJECT_ID
 gcloud config set compute/region $REGION
 
-# Enable kubernetes and the docker registry on the gcloud project
+echo_green "Enable kubernetes and the docker registry on the gcloud project"
 gcloud services enable artifactregistry.googleapis.com container.googleapis.com
 
-# Create the docker repo to host container images
+echo_green "Create the docker repo to host container images"
 gcloud artifacts repositories create ${DOCKER_REPO} \
    --repository-format=docker \
    --location=$REGION \
    --description="Docker repository"
 
-# Configure local docker to push to the remote repo
+echo_green "Configure local docker to push to the remote repo"
 gcloud auth configure-docker ${REGION}-docker.pkg.dev
 
-# Create kubernetes cluster
+echo_green "Create kubernetes cluster"
 gcloud container clusters create-auto ${CLUSTER}
 gcloud container clusters get-credentials ${CLUSTER}

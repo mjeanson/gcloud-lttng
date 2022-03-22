@@ -12,8 +12,12 @@ basedir=$(readlink -f "$scriptdir/..")
 # shellcheck source=etc/conf.sh
 . "$basedir/etc/conf.sh"
 
-# Generate pods yaml files
+# shellcheck source=scripts/common.sh
+. "$basedir/scripts/common.sh"
+
+echo_green "Generate pods yaml files"
 make pods
 
+echo_green "Provision kubernetes resources"
 kubectl create -f configmaps/envmap.yaml
 kubectl create -f pods/demo1.yaml
