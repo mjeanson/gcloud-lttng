@@ -17,4 +17,3 @@ basedir=$(readlink -f "$scriptdir/..")
 
 echo_green "Delete kubernetes resources"
 kubectl delete -f pods/demo1.yaml
-kubectl delete -f configmaps/envmap.yaml

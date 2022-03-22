@@ -4,6 +4,19 @@
 
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: envmap
+data:
+  # Use a shared volume as the lttng home to share configuration across all
+  # containers in the pod.
+  LTTNG_HOME: "/lttng"
+  # Enable lttng-ust console debug logs. This is useful for development but is
+  # probably too verbose for production use.
+  LTTNG_UST_DEBUG: "1"
+
+---
+apiVersion: v1
 kind: Pod
 metadata:
   name: demo1

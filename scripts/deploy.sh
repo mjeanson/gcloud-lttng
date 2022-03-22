@@ -19,5 +19,4 @@ echo_green "Generate pods yaml files"
 make pods
 
 echo_green "Provision kubernetes resources"
-kubectl create -f configmaps/envmap.yaml
 kubectl create -f pods/demo1.yaml
