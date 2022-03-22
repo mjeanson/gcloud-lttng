@@ -6,7 +6,11 @@
 
 set -eu
 
-. etc/conf.sh
+scriptdir="$(dirname "${BASH_SOURCE[0]}")"
+basedir=$(readlink -f "$scriptdir/..")
+
+# shellcheck source=etc/conf.sh
+. "$basedir/etc/conf.sh"
 
 # CLEANUP
 gcloud container clusters delete ${CLUSTER}

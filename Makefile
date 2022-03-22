@@ -16,13 +16,13 @@ pods: $(PODS)
 
 
 provision:
-	./provision.sh
+	./scripts/provision.sh
 
 push-images:
-	./push-images.sh
+	./scripts/push-images.sh
 
 deploy: $(PODS)
-	./deploy.sh
+	./scripts/deploy.sh
 
 deprovision:
-	./deprovision.sh
+	./scripts/deprovision.sh
