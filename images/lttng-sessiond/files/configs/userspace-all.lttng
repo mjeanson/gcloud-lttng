@@ -39,7 +39,7 @@ SPDX-License-Identifier: MIT
 						<contexts/>
 					</channel>
 				</channels>
-				<trackers/>
+				<process_attr_trackers/>
 			</domain>
 			<domain>
 				<type>JUL</type>
@@ -58,6 +58,13 @@ SPDX-License-Identifier: MIT
 			</domain>
 		</domains>
 		<started>true</started>
+		<attributes>
+			<rotation_schedules>
+				<periodic>
+					<time_us>60000000</time_us>
+				</periodic>
+			</rotation_schedules>
+		</attributes>
 		<output>
 			<consumer_output>
 				<enabled>true</enabled>

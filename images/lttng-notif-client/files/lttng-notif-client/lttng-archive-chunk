@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# SPDX-FileCopyrightText: 2022 Michael Jeanson <mjeanson@efficios.com>
+#
+# SPDX-License-Identifier: MIT
+
+set -eu
+
+trace_chunk=$1
+dest_dir=$2
+
+mkdir -p "$dest_dir"
+
+mv "$trace_chunk" "$dest_dir/"
+
+echo "Archived chunk '$trace_chunk' in '$dest_dir'"

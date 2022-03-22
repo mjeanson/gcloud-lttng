@@ -17,6 +17,18 @@ data:
 
 ---
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: saved-chunks
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: v1
 kind: Pod
 metadata:
   name: demo1
@@ -48,6 +60,8 @@ spec:
     volumeMounts:
       - mountPath: /lttng
         name: lttng-home
+      - mountPath: /lttng-traces
+        name: lttng-traces
       - mountPath: /run/lttng
         name: lttng-rundir
       - mountPath: /dev/shm
@@ -78,13 +92,27 @@ spec:
       failureThreshold: 1
       timeoutSeconds: 5
 
+  - name: lttng-notif-client
+    image: ${REGION}-docker.pkg.dev/${PROJECT_ID}/${DOCKER_REPO}/lttng-notif-client:v1
+    imagePullPolicy: Always
+    volumeMounts:
+      - mountPath: /lttng-traces
+        name: lttng-traces
+      - mountPath: /run/lttng
+        name: lttng-rundir
+      - mountPath: /saved-chunks
+        name: saved-chunks
+    envFrom:
+      - configMapRef:
+          name: envmap
+    command: ["/usr/local/bin/lttng-notif-client"]
+    args: ["userspace-all", "/saved-chunks"]
+
   # LTTng demo app 1
   - name: lttng-app1
     image: ${REGION}-docker.pkg.dev/${PROJECT_ID}/${DOCKER_REPO}/lttng-app1:v1
     imagePullPolicy: Always
     volumeMounts:
-      - mountPath: /lttng
-        name: lttng-home
       - mountPath: /run/lttng
         name: lttng-rundir
       - mountPath: /dev/shm
@@ -98,8 +126,6 @@ spec:
     image: ${REGION}-docker.pkg.dev/${PROJECT_ID}/${DOCKER_REPO}/lttng-app2:v1
     imagePullPolicy: Always
     volumeMounts:
-      - mountPath: /lttng
-        name: lttng-home
       - mountPath: /run/lttng
         name: lttng-rundir
       - mountPath: /dev/shm
@@ -115,6 +141,13 @@ spec:
   # Shared LTTng run dir for socket communication
   - name: lttng-rundir
     emptyDir: {}
+  # Shared LTTng traces dir for sessiond and notifications client
+  - name: lttng-traces
+    emptyDir: {}
+  # Persistent volume to store rotated chunks for future processing
+  - name: saved-chunks
+    persistentVolumeClaim:
+      claimName: saved-chunks
   # Shared SHM drive for tracing buffers. Size will need to be adjusted
   # according to your tracing buffers configuration.
   - name: devshm

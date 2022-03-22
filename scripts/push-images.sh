@@ -51,11 +51,13 @@ build_image lttng-dev stable-2.13
 echo_green "Build cluster images"
 build_project_image lttng-sessiond v1
 build_project_image lttng-relayd v1
+build_project_image lttng-notif-client v1
 build_project_image lttng-app1 v1
 build_project_image lttng-app2 v1
 
 echo_green "Push cluster images to repo"
 push_project_image lttng-sessiond v1
 push_project_image lttng-relayd v1
+push_project_image lttng-notif-client v1
 push_project_image lttng-app1 v1
 push_project_image lttng-app2 v1
