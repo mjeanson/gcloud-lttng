@@ -8,8 +8,9 @@ kind: Pod
 metadata:
   name: demo1
 spec:
-  # Share the pid namespace across the pod, required for sessiond sidecar
+  # Share the pid namespace across the pod, required for the sessiond sidecar
   shareProcessNamespace: true
+
   # These containers are run during pod initialization
   initContainers:
   - name: create-session-config
@@ -22,6 +23,10 @@ spec:
     envFrom:
       - configMapRef:
           name: envmap
+
+  # Regular pod containers, they are started in the order they are defined
+  # here, this is not specified by kubernetes and is probably just an
+  # implementation detail.
   containers:
   # Sessiond sidecar
   - name: lttng-sessiond
@@ -40,10 +45,17 @@ spec:
     command: ["/usr/bin/lttng-sessiond"]
     args: ["-vvv", "--no-kernel"]
     lifecycle:
+      # This script will return when the sessiond has an active session thus
+      # allowing all potential events from other containers started afterwards
+      # to be captured.
       postStart:
         exec:
           command:
           - /usr/local/bin/wait-session-active.sh
+    # Use the sessiond health status system to detect a malfunction and restart
+    # the sidecar. This can be useful to detect a consumerd killed by the
+    # kernel OOM killer. The time values are only examples and will need to be
+    # adjusted to your environment.
     livenessProbe:
       exec:
         command:
@@ -53,7 +65,7 @@ spec:
       failureThreshold: 1
       timeoutSeconds: 5
 
-  # LTTng app 1
+  # LTTng demo app 1
   - name: lttng-app1
     image: ${REGION}-docker.pkg.dev/${PROJECT_ID}/${DOCKER_REPO}/lttng-app1:v1
     imagePullPolicy: Always
@@ -67,7 +79,8 @@ spec:
     envFrom:
       - configMapRef:
           name: envmap
-  # LTTng app 1
+
+  # LTTng demo app 2
   - name: lttng-app2
     image: ${REGION}-docker.pkg.dev/${PROJECT_ID}/${DOCKER_REPO}/lttng-app2:v1
     imagePullPolicy: Always
@@ -81,6 +94,7 @@ spec:
     envFrom:
       - configMapRef:
           name: envmap
+
   volumes:
   # Shared LTTng home dir to preseed configuration
   - name: lttng-home
@@ -88,7 +102,8 @@ spec:
   # Shared LTTng run dir for socket communication
   - name: lttng-rundir
     emptyDir: {}
-  # Shared SHM drive for tracing buffers
+  # Shared SHM drive for tracing buffers. Size will need to be adjusted
+  # according to your tracing buffers configuration.
   - name: devshm
     emptyDir:
       sizeLimit: "350Mi"

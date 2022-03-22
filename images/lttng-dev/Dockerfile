@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-# Base lttng stable-2.13
+# LTTng stable-2.13 with development tools
 FROM lttng:stable-2.13
 RUN apt update && apt dist-upgrade -y
 RUN apt update
