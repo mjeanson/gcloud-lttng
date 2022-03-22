@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-.PHONY: pods provision push-images deploy deprovision
+.PHONY: pods provision push-images deploy undeploy deprovision
 
 PODS = \
 	pods/demo1.yaml
@@ -23,6 +23,9 @@ push-images:
 
 deploy: $(PODS)
 	./scripts/deploy.sh
+
+undeploy: $(PODS)
+	./scripts/undeploy.sh
 
 deprovision:
 	./scripts/deprovision.sh

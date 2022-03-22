@@ -31,10 +31,14 @@ Deploy the pod to the cluster.
  
     make deploy
 
-Monitor the pod status
+Monitor the pod status.
 
     kubectl describe pod demo1
   
+Delete the pod.
+
+    make undeploy
+
 Destroy the cluster and image repository.
 
     make deprovision
